@@ -2,13 +2,19 @@ package hello.itemservice;
 
 import hello.itemservice.config.*;
 import hello.itemservice.repository.ItemRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+
+import javax.sql.DataSource;
 
 
-@Import(JdbcTemplateConfigV3.class)
+@Slf4j
+@Import(MyBatisConfig.class)
 @SpringBootApplication(scanBasePackages = "hello.itemservice.web")
 public class ItemServiceApplication {
 
@@ -16,10 +22,31 @@ public class ItemServiceApplication {
 		SpringApplication.run(ItemServiceApplication.class, args);
 	}
 
-	//@Bean
+	@Bean
 	@Profile("local")
 	public TestDataInit testDataInit(ItemRepository itemRepository) {
 		return new TestDataInit(itemRepository);
 	}
+
+
+	/**
+	 * test인 경우에, 임베디드 모드로(메모리 모드) 동작하는 데이터베이스 사용
+	 * DB_CLOSE_DELAY=-1 : 임베디드 모드에서 데이터베이스 커넥션 열결이 모두 끊어저도 데이터베이스 종료를 막는 설정
+	 * @return
+	 */
+/*
+
+	@Bean
+	@Profile("test")
+	public DataSource dataSource(){
+		log.info("메모리 데이터베이스 초기화");
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName("org.h2.Driver");
+		dataSource.setUrl("jdbc:h2:mem:db;DB_CLOSE_DELAY=-1");
+		dataSource.setUsername("sa");
+		dataSource.setPassword("");
+		return dataSource;
+	}
+*/
 
 }

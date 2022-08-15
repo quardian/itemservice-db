@@ -4,20 +4,40 @@ import hello.itemservice.repository.ItemRepository;
 import hello.itemservice.repository.ItemSearchCond;
 import hello.itemservice.repository.ItemUpdateDto;
 import hello.itemservice.repository.memory.MemoryItemRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
+@Transactional
+@Slf4j
 class ItemRepositoryTest {
 
     @Autowired
     ItemRepository itemRepository;
+
+    /*
+    @Autowired
+    PlatformTransactionManager transactionManager;
+    TransactionStatus status;
+
+    @BeforeEach
+    void beforeEach()
+    {
+        // 트랜잭션 시작
+        status = transactionManager.getTransaction(new DefaultTransactionDefinition());
+    }*/
 
     @AfterEach
     void afterEach() {
@@ -25,6 +45,8 @@ class ItemRepositoryTest {
         if (itemRepository instanceof MemoryItemRepository) {
             ((MemoryItemRepository) itemRepository).clearStore();
         }
+        // 트랜잭션 롤백
+       // transactionManager.rollback(status);
     }
 
     @Test
@@ -33,20 +55,20 @@ class ItemRepositoryTest {
         Item item = new Item("itemA", 10000, 10);
 
         //when
-        Item savedItem = itemRepository.save(item);
+        itemRepository.save(item);
 
         //then
         Item findItem = itemRepository.findById(item.getId()).get();
-        assertThat(findItem).isEqualTo(savedItem);
+        assertThat(findItem).isEqualTo(item);
     }
 
     @Test
     void updateItem() {
         //given
         Item item = new Item("item1", 10000, 10);
-        Item savedItem = itemRepository.save(item);
-        Long itemId = savedItem.getId();
-
+        itemRepository.save(item);
+        Long itemId = item.getId();
+log.info("[[[[[[[[[itemId] = {}", itemId);
         //when
         ItemUpdateDto updateParam = new ItemUpdateDto("item2", 20000, 30);
         itemRepository.update(itemId, updateParam);

@@ -38,21 +38,19 @@ public class JdbcTemplateItemRepositoryV2 implements ItemRepository {
     }
 
     @Override
-    public Item save(Item item) {
+    public void save(Item item) {
         String sql = "insert into item(item_name, price, quantity) " +
                 "values (:itemName, :price, :quantity);";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         // 필드명으로 파라메타 설정
         SqlParameterSource param = new BeanPropertySqlParameterSource(item);
-        log.info("param={}", param.getParameterNames());
 
         template.update(sql, param, keyHolder);
 
         long key = keyHolder.getKey().longValue();
         item.setId(key);
         log.info("ITEM inserted key = {}", key);
-        return item;
     }
 
     @Override

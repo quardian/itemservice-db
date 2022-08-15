@@ -41,12 +41,11 @@ public class JdbcTemplateItemRepositoryV3 implements ItemRepository {
     }
 
     @Override
-    public Item save(Item item) {
+    public void save(Item item) {
         SqlParameterSource param = new BeanPropertySqlParameterSource(item);
-        Number key = jdbcInsert.execute(param);
+        Number key = jdbcInsert.executeAndReturnKey(param);
 
         item.setId(key.longValue());
-        return item;
     }
 
     @Override

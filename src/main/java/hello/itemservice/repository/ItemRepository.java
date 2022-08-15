@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface ItemRepository {
 
-    Item save(Item item);
+    void save(Item item);
 
     void update(Long itemId, ItemUpdateDto updateParam);
 

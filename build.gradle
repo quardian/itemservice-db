@@ -25,8 +25,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	//JdbcTemplate 추가
+	// JdbcTemplate 추가
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	// Mybatis
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
+
 	//H2 데이터베이스
 	runtimeOnly 'com.h2database:h2'
 
